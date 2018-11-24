@@ -31,7 +31,7 @@ class ExtractionTest extends FunSuite {
 //    println(s"dist loc5 and loc6 : ${Utils.sphericalDistance(loc5, loc6)}, central angle: ${Utils.centralAngle1(loc5,loc6)}")
     assert(Utils.sphericalDistance(loc1, loc2) === Utils.EARTH_RADIUS*Utils.PI, "Antipods are incorrect")
     assert(Utils.sphericalDistance(loc1, loc1) === 0.0, "Same points result is incorrect")
-    assert(Utils.sphericalDistance(loc1, loc3) === 2880.5117204961302, "2 points distance is incorrect")
+    assert(Utils.sphericalDistance(loc1, loc3) === 2880.51339075544, "2 points distance is incorrect")
     assert(Utils.sphericalDistance(loc1, loc3) < Utils.sphericalDistance(loc1, loc2), "loc1 should be closer to loc3 than to loc2")
     assert(Utils.sphericalDistance(loc4, loc5) < Utils.sphericalDistance(loc5, loc6), "loc5 should be closer to loc4 than to loc6")
   }

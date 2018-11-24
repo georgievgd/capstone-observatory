@@ -1,11 +1,7 @@
 package observatory
 
-import java.nio.file.Path
-
 import com.sksamuel.scrimage.{Image, Pixel}
-import observatory.Visualization.getPixel
 import org.apache.log4j.Logger
-import org.apache.spark.rdd.RDD
 
 import scala.math._
 
@@ -43,50 +39,6 @@ object Interaction {
     * @return A 256×256 image showing the contents of the given tile
     */
   def tile(temperatures: Iterable[(Location, Temperature)], colors: Iterable[(Temperature, Color)], tile: Tile): Image = {
-    /*val spark = Spark.session
-
-    val points = for {lat <- 0 to 255
-                      lon <- 0 to 255
-    } yield (lat, lon)
-
-    val subtiles: RDD[(Int, Tile)] = spark.sparkContext.parallelize(points)
-      .map(p => {
-        ((p._1*1000+p._2),
-          Tile(
-            p._1+tile.x*(pow(2,8).toInt),
-            p._2+tile.y*(pow(2,8).toInt),
-            tile.zoom+8))
-      })
-    logger.debug("Subtiles " + subtiles.count() + ", with first 5:\n" + subtiles.take(5).mkString("\n"))
-    val tempTiles: RDD[(Int, ((Location, Temperature), (Tile, Boolean)))] = spark.sparkContext.parallelize(temperatures.toSeq)
-      .map(tuple => {
-        val absoluteTile = location2tile(tuple._1, tile.zoom+8)
-        val rX = absoluteTile.x - tile.x*(pow(2,8).toInt)
-        val rY = absoluteTile.y - tile.y*(pow(2,8).toInt)
-        val isInCurrentTile = rX > 0 && rX < 256 && rY > 0 && rY < 256
-        (rX*1000+rY, (tuple, (absoluteTile, isInCurrentTile)))
-      })
-    logger.debug("Temperature tiles " + tempTiles.count())
-    val validTempTiles: RDD[(Year, ((Location, Temperature), (Tile, Boolean)))] = tempTiles.filter(_._2._2._2)
-    logger.debug("FILTERED>>> Temperature tiles " + validTempTiles.count() + ", with first 5:\n" + validTempTiles.take(5).mkString("\n"))
-    val joinedRdd: RDD[(Int, (Tile, Option[((Location, Temperature), (Tile, Boolean))]))] = subtiles.leftOuterJoin(validTempTiles)
-    //logger.debug("JoinedRDD " + joinedRdd.count() + ", with first 10:\n" + joinedRdd.take(10).mkString("\n"))
-    val pixelPairRdd = joinedRdd.mapValues(v => {
-      val temp: Temperature = v._2 match
-      {
-        case Some(tuple) => tuple._1._2
-        case None => Double.MaxValue
-      }
-      getPixel(temperatures, colors, v._1.x, v._1.y, temp, 127)
-    })
-
-    //logger.debug("pixelPairRdd " + pixelPairRdd.count() + ", with first 10:\n" + pixelPairRdd.take(10).mkString("\n"))
-    val pixelMap: RDD[(Int, Pixel)] = pixelPairRdd.reduceByKey((p1, p2) => p1).sortBy(_._1)
-    //logger.debug("PixelMap " + pixelMap.count() + ", with first 5:\n" + (for(p <- pixelMap.take(5)) yield p._1+"("+p._2.red+","+p._2.green+","+p._2.blue+")").mkString("\n"))
-    val pixels: Array[Pixel] = pixelMap.map(_._2).collect()
-    logger.debug("Pixels " + pixels.length + ", with first 5:\n" + (for(p <- pixels.take(5)) yield "("+p.red+","+p.green+","+p.blue+","+p.alpha+")").mkString("\n"))
-    val image: Image = Image(256, 256, pixels)
-    image*/
     val mapper = new Tile256Heatmapper(colors, tile)
     mapper.buildImage(temperatures, tile.toString)
   }
@@ -113,7 +65,7 @@ object Interaction {
     yearlyData: Iterable[(Year, Data)],
     generateImage: (Year, Tile, Data) => Unit
   ): Unit = {
-    val tiles: Seq[Tile] = for {z <- 1 to 3
+    val tiles: Seq[Tile] = for {z <- 0 to 3
                      y <- 0 until math.pow(2, z).toInt
                      x <- 0 until math.pow(2, z).toInt
                     } yield Tile(x,y,z)
@@ -129,7 +81,7 @@ object Interaction {
     }
   }
 
-  class Tile256Heatmapper(newColors: Iterable[(Double, Color)], tile: Tile) extends Heatmaper {
+  class Tile256Heatmapper(newColors: Iterable[(Double, Color)], tile: Tile) extends Heatmapper {
     val alpha = 127
     val width = 256
     val height = 256

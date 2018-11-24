@@ -11,7 +11,7 @@ import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.util.Random
 
-trait Heatmaper {
+trait Heatmapper {
   val logger = Logger.getLogger(this.getClass)
 
   val alpha: Int
@@ -43,7 +43,7 @@ trait Heatmaper {
   }
 }
 
-class GlobalHeatmapper(newColors: Iterable[(Temperature, Color)]) extends Heatmaper {
+class GlobalHeatmapper(newColors: Iterable[(Temperature, Color)]) extends Heatmapper {
   val alpha = 255
   val width = 360
   val height = 180

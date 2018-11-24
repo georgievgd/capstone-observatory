@@ -90,64 +90,8 @@ object Visualization {
     * @return A 360×180 image where each pixel shows the predicted temperature at its location
     */
   def visualize(temperatures: Iterable[(Location, Temperature)], colors: Iterable[(Temperature, Color)]): Image = {
-    /*val spark = Spark.session
-
-    try{
-      val points = for {x <- 90 to -89 by -1
-                        y <- -180 to 179
-      } yield (x*(-10000L)+y, (x, y))
-      //logger.debug("Raw points " + points.length + ", with first 20:\n" + points.take(10).mkString("\n"))
-      val pointsRdd: RDD[(Long, (Int, Int))] = spark.sparkContext.parallelize(points)
-      val tempRawRdd: RDD[(Location, Temperature)] = spark.sparkContext.parallelize(temperatures.toSeq)
-      //logger.debug("Tempreratures raw RDD count " + tempRawRdd.count() + ", with first 10:\n" + tempRawRdd.take(10).mkString("\n"))
-      val tempRdd: RDD[(Long, (Location, Temperature))] = tempRawRdd.map(t => (math.round(t._1.lat)*(-10000) + math.round(t._1.lon), t))
-      logger.debug("Tempreratures RDD count " + tempRdd.count() + ", with first 10:\n" + tempRdd.take(10).mkString("\n"))
-      val joinedRdd: RDD[(Long, ((Int, Int), Option[(Location, Temperature)]))] = pointsRdd.leftOuterJoin(tempRdd)
-      logger.debug("Joined RDD count " + joinedRdd.count() + ", with first 30:\n" + joinedRdd.take(30).mkString("\n"))
-      val pixelPairRdd: RDD[(Long, Pixel)] = joinedRdd.mapValues(ttt =>
-      {
-        val temp = ttt._2 match
-        {
-          case Some(tuple) => tuple._2
-          case None => Double.MaxValue
-        }
-        getPixel(temperatures, colors, ttt._1._1, ttt._1._2, temp)
-      })
-      logger.debug("pixelPairRdd " + pixelPairRdd.count() + ", with first 10:\n" + pixelPairRdd.take(10).mkString("\n"))
-      val pixelMap = pixelPairRdd.reduceByKey((p1,p2) => p1).sortBy(_._1)
-      logger.debug("PixelMap " + pixelMap.count() + ", with first 10:\n" + (for(p <- pixelMap.take(10)) yield p._1+"("+p._2.red+","+p._2.green+","+p._2.blue+")").mkString("\n"))
-      val pixels = pixelMap.map(_._2).collect()
-      logger.debug("Pixels " + pixels.length + ", with first 10:\n" + (for(p <- pixels.take(10)) yield "("+p.red+","+p.green+","+p.blue+")").mkString("\n"))
-      val image = Image(360, 180, pixels)
-      image
-    }catch {
-      case e: Exception => {
-        e.printStackTrace
-        throw e
-      }
-    }*/
     val mapper = new GlobalHeatmapper(colors)
     mapper.buildImage(temperatures)
   }
-
-  def getPixel(temperatures: Iterable[(Location, Temperature)]
-               , points: Iterable[(Temperature, Color)]
-               , x: Int
-               , y: Int
-               , currentTemp: Temperature
-               , alpha: Int = 255): Pixel = {
-    var temp: Double = 0.0
-    if (currentTemp != Double.MaxValue) {
-      temp = currentTemp
-    } else {
-      temp = predictTemperature(temperatures, Location(x, y))
-    }
-    val color = interpolateColor(points, temp)
-    val pixel = Pixel(color.red, color.green, color.blue, alpha)
-    pixel
-  }
-
-
-
 
 }
