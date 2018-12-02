@@ -49,9 +49,7 @@ object Interaction {
     import java.nio.file.Files
     val parentDir = outputFile.toPath.getParent
     if (!Files.exists(parentDir)) Files.createDirectories(parentDir)
-    val img = tile(temperatures, Utils.colorScale, t)
-    //Image(1, 1, Array(Pixel(0,0,0,0)))
-    img.output(outputFile)
+    val img = tile(temperatures, Utils.temperatureColors, t).output(outputFile)
   }
 
   /**
@@ -75,7 +73,8 @@ object Interaction {
       tiles.map(t => {
         logger.debug("******************* Start " + t)
         generateImage(tuple._1, t, tuple._2)
-        logger.debug("*********** Finish " + t)
+        logger.debug("*********** Finish " + t + " >> Now sleep for 10 seconds")
+        Thread.sleep(10000)
       })
 
     }

@@ -50,12 +50,12 @@ class ExtractionTest extends FunSuite {
 //  }
 
   test("interpolateColor should work correctly") {
-    assert(Visualization.interpolateColor(Utils.colorScale, 0) === Color(0, 255, 255), "color for 0 is incorrect")
-    assert(Visualization.interpolateColor(Utils.colorScale, -10) === Color(0,85,255), "color for -10 is incorrect")
-    assert(Visualization.interpolateColor(Utils.colorScale, 33) === Color(255,9,9), "color for 33 is incorrect")
-    assert(Visualization.interpolateColor(Utils.colorScale, 63) === Color(255, 255, 255), "color for 63 is incorrect")
-    assert(Visualization.interpolateColor(Utils.colorScale, -55) === Color(17,0,54), "color for -55 is incorrect")
-    assert(Visualization.interpolateColor(Utils.colorScale, -100) === Color(0, 0, 0), "color for -100 is incorrect")
+    assert(Visualization.interpolateColor(Utils.temperatureColors, 0) === Color(0, 255, 255), "color for 0 is incorrect")
+    assert(Visualization.interpolateColor(Utils.temperatureColors, -10) === Color(0,85,255), "color for -10 is incorrect")
+    assert(Visualization.interpolateColor(Utils.temperatureColors, 33) === Color(255,9,9), "color for 33 is incorrect")
+    assert(Visualization.interpolateColor(Utils.temperatureColors, 63) === Color(255, 255, 255), "color for 63 is incorrect")
+    assert(Visualization.interpolateColor(Utils.temperatureColors, -55) === Color(17,0,54), "color for -55 is incorrect")
+    assert(Visualization.interpolateColor(Utils.temperatureColors, -100) === Color(0, 0, 0), "color for -100 is incorrect")
 
   }
 

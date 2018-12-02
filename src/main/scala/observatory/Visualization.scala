@@ -19,11 +19,10 @@ object Visualization {
     * @return The predicted temperature at `location`
     */
   def predictTemperature(temperatures: Iterable[(Location, Temperature)], location: Location): Temperature = {
+    //logger.debug("Predict temp for " + location)
     val weightedTemps = temperatures.map(t => (getWeight(t._1.lat, t._1.lon, location.lat, location.lon), t._2))
-
     val matchingLocation = weightedTemps.filter(_._1 == 1)
     if(matchingLocation.size > 0){
-      //println(matchingLocation.head._2)
       matchingLocation.head._2
     }else {
       val numeratorAgg = weightedTemps.map(t => t._1 * t._2).reduce(_ + _)

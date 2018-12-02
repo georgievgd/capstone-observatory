@@ -37,7 +37,7 @@ object Utils {
     2*math.asin(c/2)
   }
 
-  val colorScale: Seq[(Temperature,Color)] = Seq(
+  val temperatureColors: Seq[(Temperature,Color)] = Seq(
     (0, Color(0, 255, 255)),
     (60, Color(255, 255, 255)),
     (-15, Color(0, 0, 255)),
@@ -46,7 +46,15 @@ object Utils {
     (-27, Color(255, 0, 255)),
     (-60, Color(0, 0, 0)),
     (-50, Color(33, 0, 107))
+  )
 
+  val deviationColors: Seq[(Temperature,Color)] = Seq(
+    (7, Color(0, 0, 0)),
+    (4, Color(255, 0, 0)),
+    (2, Color(255, 255, 0)),
+    (0, Color(255, 255, 255)),
+    (-2, Color(0, 255, 255)),
+    (-7, Color(0, 0, 255))
   )
 
 }
