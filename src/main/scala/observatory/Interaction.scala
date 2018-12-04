@@ -69,12 +69,12 @@ object Interaction {
                     } yield Tile(x,y,z)
     //logger.debug("Tiles" + tiles.mkString("\n"))
     for(tuple <- yearlyData){
-      logger.debug("Generate tiles for year - " + tuple._1)
+      logger.debug("************ Generate tiles for year - " + tuple._1)
       tiles.map(t => {
-        logger.debug("******************* Start " + t)
+        //logger.debug("******************* Start " + t)
         generateImage(tuple._1, t, tuple._2)
-        logger.debug("*********** Finish " + t + " >> Now sleep for 10 seconds")
-        Thread.sleep(10000)
+        //logger.debug("*********** Finish " + t)
+        //Thread.sleep(10000)
       })
 
     }

@@ -17,7 +17,7 @@ object Manipulation {
     *         returns the predicted temperature at this location
     */
   def makeGrid(temperatures: Iterable[(Location, Temperature)]): GridLocation => Temperature = {
-    logger.debug("Start grid for " + temperatures.head)
+    //logger.debug("Start grid for " + temperatures.head)
     val gridLocations: Seq[GridLocation] =
       for{
         lat <- -89 to 90
@@ -26,7 +26,7 @@ object Manipulation {
 
     val grid: ParMap[GridLocation, Temperature] =
       gridLocations.par.map(gl => (gl, Visualization.predictTemperature(temperatures, Location(gl.lat, gl.lon)))).toMap
-    logger.debug("End grid for " + temperatures.head)
+    //logger.debug("End grid for " + temperatures.head)
     (gLocation) => grid(gLocation)
   }
 
@@ -39,6 +39,14 @@ object Manipulation {
     val gridFunctions: Iterable[GridLocation => Temperature] = temperaturess.map(makeGrid)
     (gLocation) => {
       val annualTemperatures: Iterable[Temperature] = gridFunctions.map(grid => grid(gLocation))
+      annualTemperatures.sum / annualTemperatures.size
+    }
+  }
+
+  def averageGrids(grids: Iterable[GridLocation => Temperature]): GridLocation => Temperature = {
+    //val gridFunctions: Iterable[GridLocation => Temperature] = temperaturess.map(makeGrid)
+    (gLocation) => {
+      val annualTemperatures: Iterable[Temperature] = grids.map(grid => grid(gLocation))
       annualTemperatures.sum / annualTemperatures.size
     }
   }

@@ -55,30 +55,30 @@ object Visualization2 {
   }
 
   def generateTemperaturesImage(year: Year, t: Tile, grid: GridLocation => Temperature): Unit = {
-    generateImage(year, t, grid, "temperatures2")
+    generateImage(year, t, grid, "temperatures", Utils.temperatureColors)
   }
 
   def generateDeviationsImage(year: Year, t: Tile, grid: GridLocation => Temperature): Unit = {
-    generateImage(year, t, grid, "deviations")
+    generateImage(year, t, grid, "deviations", Utils.deviationColors)
   }
 
-  def generateImage(year: Year, t: Tile, grid: GridLocation => Temperature, folderName: String): Unit = {
+  def generateImage(year: Year, t: Tile, grid: GridLocation => Temperature, folderName: String, colors: Iterable[(Temperature, Color)]): Unit = {
     val outputFile = new java.io.File("target/" + folderName + "/" + year + "/" + t.zoom + "/" + t.x + "-" + t.y + ".png")
     logger.debug("Output file path - " + outputFile.getAbsolutePath)
     import java.nio.file.Files
     val parentDir = outputFile.toPath.getParent
     if (!Files.exists(parentDir)) Files.createDirectories(parentDir)
-    val img = visualizeGrid(grid, Utils.temperatureColors, t).output(outputFile)
+    val img = visualizeGrid(grid, colors, t).output(outputFile)
   }
 
   class Tile256GridHeatmapper(newColors: Iterable[(Double, Color)], tile: Tile) extends Tile256Heatmapper(newColors, tile) {
 
     def buildGridImage(tempGrid: GridLocation => Temperature, imageID:String = Random.alphanumeric.take(10).mkString): Image = {
-      logger.debug("Image started - " + imageID)
+      //logger.debug("Image started - " + imageID)
       val lineTasks = for(y <- 0 until height) yield y
       val result: ParSeq[(Int, Array[Pixel])] = lineTasks.par.map(y => getGridImageLine(y, width, tempGrid, imageID))
       val pixels = ListMap(result.toList.sortBy(_._1):_*).foldLeft(new Array[Pixel](0))((res, t) => res ++: t._2)
-      logger.debug("Image completed - " + imageID)
+      //logger.debug("Image completed - " + imageID)
       Image(width, height, pixels)
     }
 
@@ -96,8 +96,8 @@ object Visualization2 {
     }
 
     def estimatedLocationTemperature(tempGrid: GridLocation => Temperature, location: Location): Temperature = {
-      def rolloverHeight(value: Int): Int = {if (value>=this.height) 0 else value}
-      def rolloverWidth(value: Int): Int = {if (value>=this.width) 0 else value}
+      def rolloverHeight(value: Int): Int = {if (value>=90) 0 else value}
+      def rolloverWidth(value: Int): Int = {if (value>=180) 0 else value}
 
       val point = CellPoint(location.lat-location.lat.floor, location.lon-location.lon.floor)
       val d00 = tempGrid(GridLocation(location.lat.floor.toInt, location.lon.floor.toInt))
